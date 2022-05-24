@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Панель администратора</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="public/css/style_dashboard.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="node_modules/moment/moment.js"></script>
+    <script src="node_modules/moment/locale/ru.js"></script>
+</head>
+<body>
+<div class="row">
+    <div class="col s12">
+        <ul class="tabs">
+            <li class="tab col s3"><a href="#stats">Статистика</a></li>
+            <li class="tab col s3"><a href="#show__service">Сервисы</a></li>
+            <li class="tab col s3"><a href="#actions">Действия</a></li>
+            <li class="tab col s3"><a href="#role__list">Пользователи</a></li>
+        </ul>
+    </div>
+    <div class="wrapper">
+        <div id="stats">
+            <h5>Статистика</h5>
+            <%for(let i=0;i<stats.length;i++){%>
+            <div class="stats__service">
+                <span><%=JSON.stringify(stats[i].ServiceName).replace(/"/g,'')%></span>
+                <span>Количество талонов:<%=JSON.stringify(stats[i].pointer).replace(/"/g,'')%></span>
+            </div>
+            <%}%>
+            <div class="stats__count">
+                <span>Общее количество:<%=JSON.stringify(total)%></span>
+            </div>
+        </div>
+        <div id="show__service" class="show__service">
+            <div class="input-field col s12">
+                <span>Список сервисов</span>
+                <select class="select-service">
+                    <option value="" disabled selected>Выберите терминал</option>
+                    <%for (let i=0;i<data1.length;i++){%>
+                        <option><%=JSON.stringify(data1[i].nameTerminal).replace(/"/g,'')%></option>
+                    <%}%>
+                </select>
+            </div>
+            <div class="input-field col s12">
+                <span>Список терминалов</span>
+                <select class="select-terminal">
+                    <option value="" disabled selected>Выберите терминал</option>
+                    <%for (let i=0;i<data1.length;i++){%>
+                    <option><%=JSON.stringify(data1[i].nameTerminal).replace(/"/g,'')%></option>
+                    <%}%>
+                </select>
+                <div class="delete-terminal__button hide">
+                    <button class="btn delete-terminal">Удалить терминал</button>
+                </div>
+            </div>
+        </div>
+        <div  id="actions" class="actions">
+            <div class="card-panel add__service">
+                <h5>Добавить сервис</h5>
+
+                <input type="text" class="service__input" placeholder="Введите название">
+                <input type="text" class="service__description" placeholder="Введите описание кнопки">
+                <input type="time" class="service__start" placeholder="Введите начало работы">
+                <input type="time" class="service__end" placeholder="Введите конец работы">
+                <p>
+                    <label>
+                        <input type="checkbox" class="filled-in isRegService">
+                        <span>Относится к регистратуре</span>
+                    </label>
+                </p>
+                <select  class="select__terminal browser-default">
+                    <option disabled selected>Выберите значение</option>
+                    <%for (let j=0;j<data1.length;j++){%>
+                    <option><%=JSON.stringify(data1[j].nameTerminal).replace(/"/g,'')%></option>
+                    <%}%>
+                </select>
+                <button class="btn service__confirm">Добавить сервис</button>
+            </div>
+            <div  class="card-panel  add__role">
+                <h4>Добавить пользователя</h4>
+                <input type="text" name="role__input" class="role__input" placeholder="Введите роль">
+                <input type="text" name="role__cab" class="role__cab" placeholder="Введите номер кабинета">
+                <label>Выберите терминал</label>
+                <select  class="role_terminal browser-default">
+                    <option disabled selected>Выберите значение</option>
+                    <%for (let j=0;j<data1.length;j++){%>
+                    <option><%=JSON.stringify(data1[j].nameTerminal).replace(/"/g,'')%></option>
+                    <%}%>
+                </select>
+                <p>
+                    <label>
+                        <input type="checkbox" class="filled-in isReg" data-id="1">
+                        <span>Относится к регистратуре</span>
+                    </label>
+                </p>
+                <p>
+                    <label>
+                        <input type="checkbox" class="filled-in isNotice">
+                        <span>Оставлять заметки</span>
+                    </label>
+                </p>
+                <p>
+                    <label>
+                        <input type="checkbox" class="filled-in sendNotice">
+                        <span>Показывать фио</span>
+                    </label>
+                </p>
+                <button class="btn role__button">Добавить</button>
+            </div>
+            <div class="card-panel add__terminal">
+                <h4>Добавить терминал</h4>
+                <input type="text"  class="terminal__input" placeholder="Введите название терминала">
+                <input type="text" class="terminal__desc" placeholder="Введите описание терминала">
+                <button class="btn terminal__button">Добавить</button>
+            </div>
+        </div>
+
+            <div class="roles" id="role__list">
+                <h5>Список пользователей</h5>
+                <select  class="user_terminal browser-default">
+                    <option disabled selected>Выберите значение</option>
+                    <%for (let i=0;i<data1.length;i++){%>
+                    <option><%=JSON.stringify(data1[i].nameTerminal).replace(/"/g,'')%></option>
+                    <%}%>
+                </select>
+                <div id="modal1" class="modal">
+                    <div class="modal-content">
+                    </div>
+                    <div class="modal-footer">
+                        <a href="#!" class="modal-close waves-effect waves-green btn-flat">Agree</a>
+                    </div>
+                </div>
+            </div>
+    </div>
+    <script src="public/js/dashboard.js"></script>
+</body>
+</html>
