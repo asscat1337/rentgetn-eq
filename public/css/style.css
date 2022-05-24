@@ -9,7 +9,7 @@ section {
 div.left {
     flex: 0 0 40%;
     height: 100%;
-    padding: 50px;
+    padding: 40px;
 }
 .right{
     height: 100vh;
