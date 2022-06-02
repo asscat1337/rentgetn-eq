@@ -102,7 +102,7 @@ body{margin: 0; box-sizing: border-box; font-family: Arial, sans-serif; height: 
     height: 90vh;
     width: 49vh;
     border-radius: 5px;
-    border: 1px solid black;
+    box-shadow: 1px 1px 7px black;
 }
 .ticket__content{
     height: 45%;
@@ -195,20 +195,20 @@ color:red;
 .content{
     display: flex;
 }
-.op__list,.free__list,.pay__list{
+.free__list,.pay__list{
     position: relative;
     margin: 10px;
     height: 90vh;
     width: 50vh;
     border-radius: 5px;
-    border: 1px solid black;
+    border: 1px solid silver;
     overflow-x: scroll;
+    box-shadow: 1px 1px 7px black;
 }
 .free__list h6,.pay__list h6{
     border-bottom: 1px solid black;
     display: flex;
     justify-content: space-between;
-    /*margin-right: 10px;*/
 }
 .free__count, .pay__count{
     margin-right: 20px;
