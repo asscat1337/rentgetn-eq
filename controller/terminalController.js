@@ -56,14 +56,14 @@ class TerminalController {
 async updatePointerNull(req,res,next){
         try{
             const {service,terminal} = req.body
-           await Service.update({pointer:1},{
+           await Service.update({pointer:0},{
                 where:{
-                    terminal,
-                    service
+                    setTerminalName:terminal,
+                    ServiceName:service
                 }
             }).then(()=>res.json({"success":true}))
         }catch (e) {
-
+            return res.status(500).json(e)
         }
 }
 }

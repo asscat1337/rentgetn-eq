@@ -4,6 +4,7 @@
       display:none;
     }
     @page{
+        position: absolute;
       size:a8;
       margin:0;  padding: 0;
     }
@@ -16,13 +17,12 @@
     width: 100%;
     z-index: 3;
 }
-
       .ticket{
-        margin:0;
-        padding: 0;
-        /*height: 8cm;*/
-        width: 100%;
-        background: white;
+       position: absolute;
+        top: 0;
+        /*margin:0;*/
+        /*padding: 0;*/
+        background: inherit;
         opacity: 1;
         visibility:visible;
         outline: none !important;

@@ -28,7 +28,6 @@ class TicketService {
             }
             return {length:true}
         }catch (e) {
-            console.log(e)
             return e
         }
     }

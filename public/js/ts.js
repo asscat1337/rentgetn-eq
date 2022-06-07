@@ -71,6 +71,7 @@ take__ticket.forEach((btn)=> {
 </div>
     </div>`);
                         if (item.pointer === 999) {
+                            console.log(item.pointer)
                             async function fetchReset() {
                                 await fetch('ts/updatePointerNull', {
                                     method: 'POST',
@@ -97,6 +98,7 @@ take__ticket.forEach((btn)=> {
                             "isPay":item.isPay,
                         };
                         const fetchData = async () => {
+                            console.log(window.innerHeight)
                             try {
                                  await fetch('ts/setStateTicket', {
                                     method: 'POST',
@@ -107,22 +109,29 @@ take__ticket.forEach((btn)=> {
                                 })
                                     .then(res=>res.json())
                                     .then(data=>{
+                                        let interval = 0;
                                         const checkPay = item.isPay ?
                                             ({isPayCount:item.pointer}) :
                                             ({isFreeCount:item.pointer})
                                         socket.emit('update queue', {...data[0],...checkPay});
                                         socket.emit('show tv', data);
-                                        let ticket = document.querySelector('.ticket');
+                                        let ticket = document.querySelector('.modal__ticket');
                                         const delay = ms => new Promise(((resolve, reject) => setTimeout(resolve,ms)))
                                         if(ticket){
-                                            delay(2000).then(()=>{
-                                                // window.print()
                                                 delay(1000).then(()=>{
-                                                    btn.classList.remove('btn__active')
-                                                    document.querySelector('.modal__ticket').remove()
-                                                    // document.location.reload()
+                                                    ticket.classList.add('animate')
+                                                    const timer = setInterval(()=>{
+                                                        interval+=50
+                                                        ticket.style.top = `${interval}px`
+                                                        if(interval > window.innerHeight){
+                                                            clearInterval(timer)
+                                                            window.print()
+                                                            interval = 0
+                                                            btn.classList.remove('btn__active')
+                                                            document.querySelector('.modal__ticket').remove()
+                                                        }
+                                                    },300)
                                                 })
-                                            })
                                         }
                                     })
 

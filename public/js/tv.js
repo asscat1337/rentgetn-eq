@@ -120,11 +120,13 @@ async function play_all(data){
 
 // setInterval(()=>{
     const start = Date.now();
-    console.log('timeout')
     socket.on('message',(data)=>{
         if(data===null) return;
         if(data.hasOwnProperty('data')){
-            const {cabinet,isCab,ticket} = data?.data
+            console.log(data.hasOwnProperty('data'))
+
+
+            const {cabinet,isCab,ticket} = data.data
 
             if(getRoomId.status === "0"){
                 const tickets = document.querySelectorAll('.ticket')

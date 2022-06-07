@@ -151,6 +151,9 @@ body{
     box-shadow: 0px 13px 0 0 #425602;
     border-bottom: 1px solid #92c000;
 }
+.btn__ticket:hover{
+    cursor: pointer;
+}
 .btn__active{
     margin: 13px auto;
     box-shadow: none;
@@ -164,5 +167,9 @@ body{
     justify-content: center;
     align-items: center;
     height: calc(100% + 50px);
+}
+.animate{
+    transition: 1s;
+    /*top:40px;*/
 }
 
