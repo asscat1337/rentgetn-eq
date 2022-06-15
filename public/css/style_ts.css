@@ -169,7 +169,7 @@ body{
     height: calc(100% + 50px);
 }
 .animate{
-    transition: 1s;
+    transition:0.8s linear;
     /*top:40px;*/
 }
 

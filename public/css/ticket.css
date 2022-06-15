@@ -4,9 +4,8 @@
       display:none;
     }
     @page{
-        position: absolute;
       size:a8;
-      margin:0;  padding: 0;
+      margin:0 auto;  padding: 0;
     }
 
 .modal__ticket {
@@ -18,10 +17,8 @@
     z-index: 3;
 }
       .ticket{
-       position: absolute;
-        top: 0;
-        /*margin:0;*/
-        /*padding: 0;*/
+          transform: rotate(180deg);
+        margin:0 auto;
         background: inherit;
         opacity: 1;
         visibility:visible;

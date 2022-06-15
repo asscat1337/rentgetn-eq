@@ -130,7 +130,7 @@ take__ticket.forEach((btn)=> {
                                                             btn.classList.remove('btn__active')
                                                             document.querySelector('.modal__ticket').remove()
                                                         }
-                                                    },300)
+                                                    },150)
                                                 })
                                         }
                                     })

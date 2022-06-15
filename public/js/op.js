@@ -33,7 +33,7 @@ socket.on('disconnect',()=>{
     }, 500);
 });
 
-
+let dataTicket
 const getQueryStringParams = query => {
     return query
         ? (/^[?#]/.test(query) ? query.slice(1) : query)
@@ -74,26 +74,83 @@ document.addEventListener('DOMContentLoaded',()=>{
         socket.emit('end')
     })
 
-    function renderList(selector,ticket,timeSelector,time,id){
+    function renderList(selector,timeSelector,data){
         document.querySelector(selector).insertAdjacentHTML('afterend',`
             <div class="result">
-                <span class="result__ticket">${ticket}</span>
+                <span class="result__ticket">${data.number}</span>
                 <span class="result__time">
                     время ожидания:
-                    <span class="time__ticket"></span>
+                    <span class="time__ticket">00:00</span>
+                    <button class="btn btn-call">
+                        Вызвать
+                    </button>
+                     <button class="btn btn-complete">
+                        Обслужен
+                    </button>
                 </span>
             </div> 
             `)
         document.querySelectorAll('.result').forEach(element=>{
            const test = element.querySelector('.time__ticket')
             const test1 = element.querySelector('.result__ticket').textContent
-            if(test1 === ticket){
+            if(test1 === data.number){
                 setInterval(()=>{
-                    test.textContent = generateTimeQueue(timeSelector,time)
+                    test.textContent = generateTimeQueue(timeSelector,data.time)
                 },1000)
             }
         })
+
+        const btnCall = document.querySelectorAll('.btn-call')
+        const btnComplete = document.querySelectorAll('.btn-complete')
+        if(btnCall){
+            btnCall.forEach(btn=>{
+                btn.addEventListener('click',(event)=>{
+                    const parentSelector = event.target.closest('.result')
+                    const ticket = parentSelector.querySelector('.result__ticket')
+                    if(ticket.textContent === data.number){
+                        dataTicket = data
+                        ticket__text.textContent = data.number
+                        service___text.textContent = data.service
+                        decrementCount(data.isPay === 1 ? '.pay__count' : ".free__count")
+                       socket.emit('call ticket',data)
+                        Array.from(buttonMain).slice(2).map(item=>{
+                            payButton.disabled = true
+                            freeButton.disabled = true
+                            item.disabled = false
+                        })
+                    }
+
+                })
+            })
+        }
+        btnComplete.forEach(btn=>{
+            btn.addEventListener('click',(event)=>{
+                const parentSelector = event.target.closest('.result')
+                const ticket = parentSelector.querySelector('.result__ticket')
+
+                if(ticket.textContent === data.number){
+                    dataTicket = data
+                    socket.emit('add data', {
+                        "tvinfo_id":dataTicket.tvinfo_id,
+                        user:getStringParams(`${Object.values(window.location.search).join('')}`)
+                    });
+                    if(ticket__text.textContent && service___text.textContent){
+                        ticket__text.textContent = ""
+                        service___text.textContent = ""
+                        Array.from(buttonMain).slice(2).map(item=>{
+                            item.disabled = true
+                        })
+                        payButton.disabled = false
+                        freeButton.disabled = false
+                    }
+                    parentSelector.remove()
+                    decrementCount(data.isPay === 1 ? ".pay__count":".free__count")
+                    dataTicket = {}
+                }
+            })
+        })
     }
+
     const generateCountQueue=(parentSelector,countSelector)=>{
         const count = document.querySelectorAll(`${parentSelector} div`)
         console.log(parentSelector,countSelector)
@@ -102,7 +159,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
     const generateTimeQueue=(selector,time)=>{
             const different = getDate(getTime()) - getDate(time)
-            const toHours =Math.floor( different%(1000*60*60*24)/(1000*60*60))
+            const toHours = Math.floor( different%(1000*60*60*24)/(1000*60*60))
             const toMinutes = Math.round((different%(1000*60*60*24)%(1000*60*60))/(60*1000))
 
 
@@ -115,11 +172,11 @@ document.addEventListener('DOMContentLoaded',()=>{
 
     socket.on('await queue',data=>{
         if(data.isPay) {
-            renderList('.information__pay',data.number,'.time__ticket',data.time,data.tvinfo_id)
+            renderList('.information__pay','.time__ticket',data)
             generateCountQueue('.pay__list','.pay__count')
         }
         if(!data.isPay){
-            renderList('.information__free',data.number,'.time__ticket',data.time,data.tvinfo_id)
+            renderList('.information__free','.time__ticket',data)
             generateCountQueue('.free__list','.free__count')
         }
         let list = document.querySelectorAll('.result')
@@ -148,10 +205,6 @@ document.addEventListener('DOMContentLoaded',()=>{
        socket.emit('get data',{received:socket.id,isPay:0})
     })
 
-    // function checkCountTicket(selector,count){
-    //     return document.querySelector(selector).textContent = count
-    // }
-
     const getDate=(date)=>{
         return new Date(0,0,0,date.split(':')[0],date.split(':')[1],date.split(':')[2])
     }
@@ -168,9 +221,9 @@ document.addEventListener('DOMContentLoaded',()=>{
 
         for(const item of ticket){
            if(item.isPay){
-                renderList('.information__pay',item.number,'.time__ticket',item.time,item.tvinfo_id)
+                renderList('.information__pay','.time__ticket',item)
            }else{
-               renderList('.information__free',item.number,'.time__ticket',item.time,item.tvinfo_id)
+               renderList('.information__free','.time__ticket',item)
            }
         }
 
@@ -204,7 +257,6 @@ document.addEventListener('DOMContentLoaded',()=>{
             })
     })
 });
-let dataTicket
 socket.on('show test',data=>{
     dataTicket = data
         ticket__text.innerHTML = data.number;

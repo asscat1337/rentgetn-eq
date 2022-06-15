@@ -265,6 +265,23 @@ io.on('connection', async(socket) => {
             await client.del(data)
         })
 
+        socket.on('call ticket',async (data)=>{
+            const {userdata} = socket.handshake.session
+            const {number,cabinet,isCab} = data
+          await sequelize.query(`UPDATE tvinfo__${userdata.terminalName}${moment().format('DMMYYYY')} SET isCall = 1 WHERE tvinfo_id = ${data.tvinfo_id}`,{
+              type:QueryTypes.UPDATE
+          })
+            soundData(number,cabinet,isCab)
+                .then(sound=>{
+                    const object = {
+                        sound,
+                        data:{...data,ticket:data.number,cabinet:userdata.cab},
+                        ticket:number,
+                    }
+                    socket.to(userdata.terminalName).emit('message',object)
+                })
+        })
+
         socket.on('clicked',async(data)=>{
 
             const {userdata} = socket.handshake.session
@@ -292,7 +309,6 @@ io.on('connection', async(socket) => {
                         ticket,
                         rooms:userdata.terminalName
                     }
-                    // await client.set(ticket,JSON.stringify(objects))
                                 socket.to(userdata.terminalName).emit('message',objects)
                                 io.sockets.to(received).emit('complete sound',{isDisabled:false})
                 })
@@ -381,6 +397,7 @@ io.on('connection', async(socket) => {
             socket.broadcast.to(`${terminalName}`).emit('show result', data)
         })
         socket.on('complete data',(data)=>{
+            console.log(data)
 	    const {userdata} = socket.handshake.session
             socket.broadcast.to(userdata.terminalName).emit('completed',data)
         })
