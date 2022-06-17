@@ -55,6 +55,7 @@ const getStringParams = query=>{
     },{})
 }
 
+
 document.addEventListener('DOMContentLoaded',()=>{
     const modals = document.querySelectorAll('.modal');
     M.Modal.init(modals,{
@@ -73,6 +74,24 @@ document.addEventListener('DOMContentLoaded',()=>{
     window.addEventListener('unload',()=>{
         socket.emit('end')
     })
+
+    const decrementCount=(selector)=>{
+        const currentCount = document.querySelector(selector)
+        if(Number(currentCount.textContent) === 0){
+            return
+        }
+        currentCount.textContent = Number(currentCount.textContent) - 1
+    }
+
+    const handleAction=(event,data,callback)=>{
+                const parentSelector = event.target.closest('.result')
+                const ticket = parentSelector.querySelector('.result__ticket')
+                if(ticket.textContent === data.number){
+                    dataTicket = data
+                    decrementCount(data.isPay === 1 ? '.pay__count' : ".free__count")
+                    callback()
+                }
+    }
 
     function renderList(selector,timeSelector,data){
         document.querySelector(selector).insertAdjacentHTML('afterend',`
@@ -100,60 +119,53 @@ document.addEventListener('DOMContentLoaded',()=>{
             }
         })
 
+
+
         const btnCall = document.querySelectorAll('.btn-call')
         const btnComplete = document.querySelectorAll('.btn-complete')
         if(btnCall){
-            btnCall.forEach(btn=>{
-                btn.addEventListener('click',(event)=>{
-                    const parentSelector = event.target.closest('.result')
-                    const ticket = parentSelector.querySelector('.result__ticket')
-                    if(ticket.textContent === data.number){
-                        dataTicket = data
-                        ticket__text.textContent = data.number
-                        service___text.textContent = data.service
-                        decrementCount(data.isPay === 1 ? '.pay__count' : ".free__count")
+           btnCall.forEach(btn=>{
+               btn.addEventListener('click',(event)=>{
+                   handleAction(event,data,()=>{
                        socket.emit('call ticket',data)
-                        Array.from(buttonMain).slice(2).map(item=>{
-                            payButton.disabled = true
-                            freeButton.disabled = true
-                            item.disabled = false
-                        })
-                    }
-
-                })
-            })
-        }
-        btnComplete.forEach(btn=>{
-            btn.addEventListener('click',(event)=>{
-                const parentSelector = event.target.closest('.result')
-                const ticket = parentSelector.querySelector('.result__ticket')
-
-                if(ticket.textContent === data.number){
-                    dataTicket = data
-                    socket.emit('add data', {
-                        "tvinfo_id":dataTicket.tvinfo_id,
-                        user:getStringParams(`${Object.values(window.location.search).join('')}`)
-                    });
-                    if(ticket__text.textContent && service___text.textContent){
-                        ticket__text.textContent = ""
-                        service___text.textContent = ""
-                        Array.from(buttonMain).slice(2).map(item=>{
-                            item.disabled = true
-                        })
-                        payButton.disabled = false
-                        freeButton.disabled = false
-                    }
-                    parentSelector.remove()
-                    decrementCount(data.isPay === 1 ? ".pay__count":".free__count")
-                    dataTicket = {}
-                }
-            })
-        })
+                       ticket__text.textContent = data.number
+                       service___text.textContent = data.service
+                       Array.from(buttonMain).slice(2).map(item=>{
+                           payButton.disabled = true
+                           freeButton.disabled = true
+                           item.disabled = false
+                       })
+                   })
+               })
+           })
+    }
+    if(btnComplete){
+       btnComplete.forEach(btn=>{
+           btn.addEventListener('click',event=>{
+               handleAction(event,data,()=>{
+                   socket.emit('add data', {
+                       "tvinfo_id":dataTicket.tvinfo_id,
+                       user:getStringParams(`${Object.values(window.location.search).join('')}`)
+                   });
+                   socket.emit('complete data',{"number":ticket__text.textContent})
+                   if(ticket__text.textContent && service___text.textContent){
+                       ticket__text.textContent = ""
+                       service___text.textContent = ""
+                   }
+                   Array.from(buttonMain).slice(2).map(item=>{
+                       payButton.disabled = false
+                       freeButton.disabled = false
+                       item.disabled = true
+                   })
+               })
+               event.target.closest('.result').remove()
+           })
+       })
+    }
     }
 
     const generateCountQueue=(parentSelector,countSelector)=>{
         const count = document.querySelectorAll(`${parentSelector} div`)
-        console.log(parentSelector,countSelector)
         document.querySelector(countSelector).textContent = count.length
     }
 
@@ -188,13 +200,6 @@ document.addEventListener('DOMContentLoaded',()=>{
         });
             })
 
-    const decrementCount=(selector)=>{
-        const currentCount = document.querySelector(selector)
-        if(Number(currentCount.textContent) === 0){
-            return
-        }
-        currentCount.textContent = Number(currentCount.textContent) - 1
-    }
 
     payButton.addEventListener('click',()=>{
         decrementCount('.pay__count')

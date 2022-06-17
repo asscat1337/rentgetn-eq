@@ -36,7 +36,6 @@ take__ticket.forEach((btn)=> {
         })
             .then(res => res.json())
             .then(data => {
-                console.log(data)
                 let res = data;
                 res.forEach(item => {
                     if (time >= item.end_time || time <= item.start_time) {

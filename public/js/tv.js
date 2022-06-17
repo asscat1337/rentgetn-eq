@@ -86,22 +86,19 @@ socket.on('completed',data=>{
         Array.from(document.querySelectorAll('.hide')).reverse().forEach(item=>item.classList.remove('hide'))
     }
 })
-let time = 0
 async function testFunction(data){
     const sound = data.sound
     for(let i=0;i<sound.length;i++){
         const audio = new Audio(sound[i])
         await playAudio(audio)
-        time+= audio.duration
 
-        console.log(time)
         if(i+1 === sound.length){
             socket.emit('delete sound',data.ticket)
             socket.emit('test socket')
         }
     }
 }
-async function playAudio(sound,callback){
+async function playAudio(sound){
     sound.play()
     await new Promise((resolve,reject)=>{
         sound.addEventListener('ended',()=>{
@@ -123,7 +120,6 @@ async function play_all(data){
     socket.on('message',(data)=>{
         if(data===null) return;
         if(data.hasOwnProperty('data')){
-            console.log(data.hasOwnProperty('data'))
 
 
             const {cabinet,isCab,ticket} = data.data

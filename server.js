@@ -268,8 +268,9 @@ io.on('connection', async(socket) => {
         socket.on('call ticket',async (data)=>{
             const {userdata} = socket.handshake.session
             const {number,cabinet,isCab} = data
-          await sequelize.query(`UPDATE tvinfo__${userdata.terminalName}${moment().format('DMMYYYY')} SET isCall = 1 WHERE tvinfo_id = ${data.tvinfo_id}`,{
-              type:QueryTypes.UPDATE
+          await sequelize.query(`UPDATE tvinfo__${userdata.terminalName}${moment().format('DMMYYYY')} SET isCall = 1,cabinet = :cab WHERE tvinfo_id = ${data.tvinfo_id}`,{
+              type:QueryTypes.UPDATE,
+              replacements:{cab:userdata.cab}
           })
             soundData(number,cabinet,isCab)
                 .then(sound=>{
@@ -295,6 +296,8 @@ io.on('connection', async(socket) => {
                 replacements:{isCall:1,number,tvinfo_id,cabinet:userdata.cab},
                 type:QueryTypes.UPDATE
             })
+
+            console.log(userdata.cab,'test')
             const {number:ticket,tvinfo_id:id} = findTicket[0]
             const findUser = await User.findByPk(userdata.role_id)
             const {cab:cabinet,isCab} = findUser
