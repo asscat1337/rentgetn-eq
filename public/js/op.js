@@ -126,6 +126,7 @@ document.addEventListener('DOMContentLoaded',()=>{
         if(btnCall){
            btnCall.forEach(btn=>{
                btn.addEventListener('click',(event)=>{
+                   btn.disabled = true
                    handleAction(event,data,()=>{
                        socket.emit('call ticket',data)
                        ticket__text.textContent = data.number

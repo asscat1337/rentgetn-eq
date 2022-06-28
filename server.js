@@ -272,7 +272,7 @@ io.on('connection', async(socket) => {
               type:QueryTypes.UPDATE,
               replacements:{cab:userdata.cab}
           })
-            soundData(number,cabinet,isCab)
+            soundData(number,userdata.cab,isCab)
                 .then(sound=>{
                     const object = {
                         sound,
@@ -297,7 +297,6 @@ io.on('connection', async(socket) => {
                 type:QueryTypes.UPDATE
             })
 
-            console.log(userdata.cab,'test')
             const {number:ticket,tvinfo_id:id} = findTicket[0]
             const findUser = await User.findByPk(userdata.role_id)
             const {cab:cabinet,isCab} = findUser
