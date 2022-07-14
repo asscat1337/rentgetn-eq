@@ -17,7 +17,7 @@ const inputNotice = document.querySelector('.input-notice')
 
 let number,service,terminal = '';
 let numberSocket,roomId;
-const btnComplete = document.querySelector('.next__complete');
+const btnDone= document.querySelector('.next__complete');
 socket.on('disconnect',()=>{
     document.body.insertAdjacentHTML(`beforebegin`,`
  <div class="preloader">
@@ -53,6 +53,9 @@ const getStringParams = query=>{
         params[key] = value ? decodeURIComponent(value.replace(/\+/g, ' ')) : '';
         return params;
     },{})
+}
+const toggleActiveButton=(isActive,selector)=>{
+    selector.forEach(item=>item.disabled = isActive)
 }
 
 
@@ -118,15 +121,12 @@ document.addEventListener('DOMContentLoaded',()=>{
                 },1000)
             }
         })
-
-
-
         const btnCall = document.querySelectorAll('.btn-call')
         const btnComplete = document.querySelectorAll('.btn-complete')
         if(btnCall){
-           btnCall.forEach(btn=>{
+        btnCall.forEach(btn=>{
                btn.addEventListener('click',(event)=>{
-                   btn.disabled = true
+                   toggleActiveButton(true,btnCall)
                    handleAction(event,data,()=>{
                        socket.emit('call ticket',data)
                        ticket__text.textContent = data.number
@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded',()=>{
                    })
                })
            })
-    }
+     }
     if(btnComplete){
        btnComplete.forEach(btn=>{
            btn.addEventListener('click',event=>{
@@ -158,6 +158,7 @@ document.addEventListener('DOMContentLoaded',()=>{
                        freeButton.disabled = false
                        item.disabled = true
                    })
+                   toggleActiveButton(false,document.querySelectorAll('.btn-call'))
                })
                event.target.closest('.result').remove()
            })
@@ -223,7 +224,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     }
 
     socket.on('show data',data=>{
-        const {ticket,services} = data
+        const {ticket} = data
 
         for(const item of ticket){
            if(item.isPay){
@@ -262,7 +263,6 @@ document.addEventListener('DOMContentLoaded',()=>{
                 }
             })
     })
-});
 socket.on('show test',data=>{
     dataTicket = data
         ticket__text.innerHTML = data.number;
@@ -317,7 +317,7 @@ socket.on('await notice',data=>{
         })
     }
     })
-btnComplete.addEventListener('click',()=>{
+btnDone.addEventListener('click',()=>{
     freeButton.disabled = false;
     payButton.disabled = false;
     document.querySelectorAll('.result').forEach(item=>{
@@ -338,6 +338,7 @@ btnComplete.addEventListener('click',()=>{
         });
     ticket__text.textContent = "";
     service___text.textContent = "";
+    toggleActiveButton(false,document.querySelectorAll('.btn-call'))
    Array.from(buttonMain).slice(2).forEach(item=>{
        item.disabled = true
    })
@@ -431,4 +432,5 @@ transferButton.addEventListener('click',()=>{
             }
         }
     })
+});
 });
