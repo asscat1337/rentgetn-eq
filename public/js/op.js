@@ -205,10 +205,12 @@ document.addEventListener('DOMContentLoaded',()=>{
 
     payButton.addEventListener('click',()=>{
         decrementCount('.pay__count')
+        toggleActiveButton(true,document.querySelectorAll('.btn-call'))
         socket.emit('get data',{received:socket.id,isPay:1})
     })
     freeButton.addEventListener('click',()=>{
         decrementCount('.free__count')
+        toggleActiveButton(true,document.querySelectorAll('.btn-call'))
        socket.emit('get data',{received:socket.id,isPay:0})
     })
 

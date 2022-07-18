@@ -102,7 +102,7 @@ async function init(){
                 }
                 console.log(isWeekend,isWeekend)
                 if(isActive === 1 && isWeekend === 1){
-                    const job1 = new cron('05 22 * * 1-5',async()=>{
+                    const job1 = new cron('05 22 * * 0-5',async()=>{
                         await generateTablesTickets(nameTerminal,nextDate,isNotice)
                         await delay(5000)
                     })
